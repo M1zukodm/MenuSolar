@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Menú</title>
+    <link rel="shortcut icon" href="img/icono.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Generador de Menú</h1>
+        <img src="img/plato.png" alt="Logo Solar"  title="Logo Solar Surge" class="logo-image">
+
+        <div class="step">
+            <h2>Paso 1: Elige el día</h2>
+            <label for="menuDate">Selecciona la fecha para el menú:</label>
+            <input type="date" id="menuDate" required>
+        </div>
+
+        <div class="step">
+            <h2>Paso 2: Define los platillos</h2>
+            <label>¿Cuántos platillos principales ofrecerás?</label>
+            <input type="radio" id="dishes5" name="numDishes" value="5" checked>
+            <label for="dishes5" class="inline-label">5 platillos</label>
+            <input type="radio" id="dishes6" name="numDishes" value="6">
+            <label for="dishes6" class="inline-label">6 platillos</label>
+
+            <div id="dishInputsContainer">
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>Paso 3: Define las bebidas (opcional)</h2>
+            <label>¿Cuántas bebidas ofrecerás?</label>
+            <input type="radio" id="drinks0" name="numDrinks" value="0" checked>
+            <label for="drinks0" class="inline-label">No incluir</label>
+            <input type="radio" id="drinks1" name="numDrinks" value="1">
+            <label for="drinks1" class="inline-label">1 bebida</label>
+            <input type="radio" id="drinks2" name="numDrinks" value="2">
+            <label for="drinks2" class="inline-label">2 bebidas</label>
+            <input type="radio" id="drinks3" name="numDrinks" value="3">
+            <label for="drinks3" class="inline-label">3 bebidas</label>
+
+            <div id="drinkInputsContainer">
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>Paso 4: ¡Genera tu menú!</h2>
+            <button id="generateBtn">🎉 Generar Menú 🎉</button>
+            <textarea id="menuOutput" readonly placeholder="Aquí aparecerá tu menú listo para copiar..."></textarea>
+            <button id="copyBtn">📋 Copiar Texto</button>
+        </div>
+
+        <div class="step history-section">
+            <h2>📋 Menús Anteriores</h2>
+            <p>Haz clic en un menú anterior para cargarlo en el formulario.</p>
+            <div id="historyContainer">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
