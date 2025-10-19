@@ -23,27 +23,54 @@
 
         <div class="step">
             <h2>Paso 2: Define los platillos</h2>
-            <label>¿Cuántos platillos principales ofrecerás?</label>
-            <input type="radio" id="dishes5" name="numDishes" value="5" checked>
-            <label for="dishes5" class="inline-label">5 platillos</label>
-            <input type="radio" id="dishes6" name="numDishes" value="6">
-            <label for="dishes6" class="inline-label">6 platillos</label>
+            <div class="input-method-selector">
+                <input type="radio" id="manualInput" name="inputMethod" value="manual" checked>
+                <label for="manualInput" class="inline-label">Escribir platillos manualmente</label>
+                <input type="radio" id="pasteInput" name="inputMethod" value="paste">
+                <label for="pasteInput" class="inline-label">Pegar lista de platillos</label>
+            </div>
+            
+            <!-- Sección para entrada manual -->
+            <div id="manualInputSection">
+                <label>¿Cuántos platillos principales ofrecerás?</label>
+                <div class="radio-group">
+                    <input type="radio" id="dishes5" name="numDishes" value="5" checked>
+                    <label for="dishes5" class="inline-label">5 platillos</label>
+                    <input type="radio" id="dishes6" name="numDishes" value="6">
+                    <label for="dishes6" class="inline-label">6 platillos</label>
+                </div>
 
-            <div id="dishInputsContainer">
+                <div id="dishInputsContainer">
+                </div>
+            </div>
+            
+            <!-- Sección para pegar lista -->
+            <div id="pasteInputSection" class="hidden">
+                <label for="pasteDishes">Pega tu lista de platillos (uno por línea):</label>
+                <textarea id="pasteDishes" placeholder="Ejemplo:
+Milanesas
+Pescado frito (carpa, cuatete)
+Barbacoa de pollo
+Pechugas asadas
+Carne enchilada
+Enmoladas"></textarea>
+                <button id="processPasteBtn">Procesar Lista</button>
             </div>
         </div>
 
         <div class="step">
             <h2>Paso 3: Define las bebidas (opcional)</h2>
             <label>¿Cuántas bebidas ofrecerás?</label>
-            <input type="radio" id="drinks0" name="numDrinks" value="0" checked>
-            <label for="drinks0" class="inline-label">No incluir</label>
-            <input type="radio" id="drinks1" name="numDrinks" value="1">
-            <label for="drinks1" class="inline-label">1 bebida</label>
-            <input type="radio" id="drinks2" name="numDrinks" value="2">
-            <label for="drinks2" class="inline-label">2 bebidas</label>
-            <input type="radio" id="drinks3" name="numDrinks" value="3">
-            <label for="drinks3" class="inline-label">3 bebidas</label>
+            <div class="radio-group">
+                <input type="radio" id="drinks0" name="numDrinks" value="0" checked>
+                <label for="drinks0" class="inline-label">No incluir</label>
+                <input type="radio" id="drinks1" name="numDrinks" value="1">
+                <label for="drinks1" class="inline-label">1 bebida</label>
+                <input type="radio" id="drinks2" name="numDrinks" value="2">
+                <label for="drinks2" class="inline-label">2 bebidas</label>
+                <input type="radio" id="drinks3" name="numDrinks" value="3">
+                <label for="drinks3" class="inline-label">3 bebidas</label>
+            </div>
 
             <div id="drinkInputsContainer">
             </div>
@@ -53,7 +80,11 @@
             <h2>Paso 4: ¡Genera tu menú!</h2>
             <button id="generateBtn">🎉 Generar Menú 🎉</button>
             <textarea id="menuOutput" readonly placeholder="Aquí aparecerá tu menú listo para copiar..."></textarea>
-            <button id="copyBtn">📋 Copiar Texto</button>
+            
+            <div class="share-buttons">
+                <button id="whatsappBtn" class="whatsapp-btn">📱 Copiar para WhatsApp</button>
+                <button id="facebookBtn" class="facebook-btn">📘 Copiar para Facebook</button>
+            </div>
         </div>
 
         <div class="step history-section">

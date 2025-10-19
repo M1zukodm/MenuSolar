@@ -6,9 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const drinkCountRadios = document.querySelectorAll('input[name="numDrinks"]');
     const drinkInputsContainer = document.getElementById('drinkInputsContainer');
     const generateBtn = document.getElementById('generateBtn');
-    const copyBtn = document.getElementById('copyBtn');
     const menuOutput = document.getElementById('menuOutput');
     const historyContainer = document.getElementById('historyContainer');
+    
+    // Nuevas referencias para la funcionalidad de pegar
+    const inputMethodRadios = document.querySelectorAll('input[name="inputMethod"]');
+    const manualInputSection = document.getElementById('manualInputSection');
+    const pasteInputSection = document.getElementById('pasteInputSection');
+    const pasteDishesTextarea = document.getElementById('pasteDishes');
+    const processPasteBtn = document.getElementById('processPasteBtn');
+    
+    // Nuevas referencias para los botones de compartir
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const facebookBtn = document.getElementById('facebookBtn');
     
     let menuHistory = [];
 
@@ -35,6 +45,65 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDrinkInputs() {
         const count = document.querySelector('input[name="numDrinks"]:checked').value;
         createInputFields(count, drinkInputsContainer, 'Bebida');
+    }
+    
+    // --- FUNCIONALIDAD DE PEGAR LISTA ---
+    
+    function toggleInputMethod() {
+        const method = document.querySelector('input[name="inputMethod"]:checked').value;
+        
+        if (method === 'manual') {
+            manualInputSection.classList.remove('hidden');
+            pasteInputSection.classList.add('hidden');
+        } else {
+            manualInputSection.classList.add('hidden');
+            pasteInputSection.classList.remove('hidden');
+        }
+    }
+    
+    function processPastedList() {
+        const text = pasteDishesTextarea.value.trim();
+        if (!text) {
+            alert('Por favor, pega una lista de platillos.');
+            return;
+        }
+        
+        // Dividir por líneas y limpiar
+        const dishes = text.split('\n')
+            .map(dish => dish.trim())
+            .filter(dish => dish.length > 0);
+            
+        if (dishes.length === 0) {
+            alert('No se encontraron platillos válidos en la lista.');
+            return;
+        }
+        
+        // Cambiar a modo manual y actualizar la cantidad de platillos
+        document.getElementById('manualInput').checked = true;
+        toggleInputMethod();
+        
+        // Actualizar el número de platillos según la lista
+        const count = dishes.length;
+        if (count <= 5) {
+            document.getElementById('dishes5').checked = true;
+        } else {
+            document.getElementById('dishes6').checked = true;
+        }
+        
+        updateDishInputs();
+        
+        // Llenar los campos con los platillos de la lista
+        const dishInputs = dishInputsContainer.querySelectorAll('.platillo');
+        dishInputs.forEach((input, i) => {
+            if (i < dishes.length) {
+                input.value = dishes[i];
+            }
+        });
+        
+        // Limpiar el área de texto
+        pasteDishesTextarea.value = '';
+        
+        alert(`Se procesaron ${dishes.length} platillos correctamente.`);
     }
 
     // --- LÓGICA DE HISTORIAL ---
@@ -88,6 +157,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const menu = menuHistory[index];
         dateInput.value = menu.date;
         
+        // Cambiar a modo manual
+        document.getElementById('manualInput').checked = true;
+        toggleInputMethod();
+        
         document.getElementById(`dishes${menu.dishes.length}`).checked = true;
         updateDishInputs();
         const dishInputs = dishInputsContainer.querySelectorAll('.platillo');
@@ -107,12 +180,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // --- FUNCIONES PARA FORMATEAR TEXTO ---
+    
+    function formatForFacebook(text) {
+        // Eliminar los asteriscos usados para negritas en WhatsApp
+        return text.replace(/\*/g, '');
+    }
+    
+    function formatForWhatsApp(text) {
+        // Mantener los asteriscos para negritas (ya está formateado así)
+        return text;
+    }
+
     // --- GENERACIÓN DEL MENÚ ---
     generateBtn.addEventListener('click', function() {
         if (!dateInput.value) {
             alert('Por favor, selecciona una fecha.');
             return;
         }
+        
+        // Obtener platillos según el método seleccionado
+        let dishes = [];
+        const method = document.querySelector('input[name="inputMethod"]:checked').value;
+        
+        if (method === 'manual') {
+            const dishInputs = Array.from(document.querySelectorAll('#dishInputsContainer .platillo'));
+            dishes = dishInputs.map(input => input.value.trim()).filter(Boolean);
+        } else {
+            // En caso de que esté en modo pegar pero no se haya procesado
+            alert('Por favor, procesa primero tu lista de platillos usando el botón "Procesar Lista".');
+            return;
+        }
+        
+        if (dishes.length === 0) {
+            alert('Por favor, ingresa al menos un platillo.');
+            return;
+        }
+        
         const date = new Date(dateInput.value + 'T12:00:00');
         const dayName = date.toLocaleDateString('es-MX', { weekday: 'long' });
         const capitalizedDayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
@@ -128,12 +232,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const greeting = greetings[capitalizedDayName] || { emoji: "☀️", text: `¡Feliz ${capitalizedDayName}!` };
 
-        const dishInputs = Array.from(document.querySelectorAll('#dishInputsContainer .platillo'));
-        const dishes = dishInputs.map(input => input.value.trim()).filter(Boolean);
-        if (dishes.length === 0) {
-            alert('Por favor, ingresa al menos un platillo.');
-            return;
-        }
         const dishesList = dishes.map(d => `✅ ${d}`).join('\n');
 
         const drinkInputs = Array.from(document.querySelectorAll('#drinkInputsContainer .bebida'));
@@ -165,19 +263,43 @@ ${drinkSection}
         saveMenuToHistory(menuData);
     });
 
-    // --- FUNCIÓN DE COPIAR ---
-    copyBtn.addEventListener('click', function() {
+    // --- FUNCIONES DE COPIADO PARA WHATSAPP Y FACEBOOK ---
+    
+    whatsappBtn.addEventListener('click', function() {
         if (menuOutput.value === '') {
             alert('Primero genera un menú para poder copiarlo.');
             return;
         }
-        navigator.clipboard.writeText(menuOutput.value).then(() => {
-            copyBtn.textContent = '¡Copiado!';
+        
+        const textForWhatsApp = formatForWhatsApp(menuOutput.value);
+        
+        navigator.clipboard.writeText(textForWhatsApp).then(() => {
+            whatsappBtn.textContent = '¡Copiado para WhatsApp!';
             setTimeout(() => {
-                copyBtn.textContent = '📋 Copiar Texto';
+                whatsappBtn.textContent = '📱 Copiar para WhatsApp';
             }, 2000);
         }).catch(err => {
             console.error('Error al copiar: ', err);
+            alert('Error al copiar el texto. Intenta nuevamente.');
+        });
+    });
+    
+    facebookBtn.addEventListener('click', function() {
+        if (menuOutput.value === '') {
+            alert('Primero genera un menú para poder copiarlo.');
+            return;
+        }
+        
+        const textForFacebook = formatForFacebook(menuOutput.value);
+        
+        navigator.clipboard.writeText(textForFacebook).then(() => {
+            facebookBtn.textContent = '¡Copiado para Facebook!';
+            setTimeout(() => {
+                facebookBtn.textContent = '📘 Copiar para Facebook';
+            }, 2000);
+        }).catch(err => {
+            console.error('Error al copiar: ', err);
+            alert('Error al copiar el texto. Intenta nuevamente.');
         });
     });
 
@@ -190,9 +312,13 @@ ${drinkSection}
     dishCountRadios.forEach(radio => radio.addEventListener('change', updateDishInputs));
     drinkCountRadios.forEach(radio => radio.addEventListener('change', updateDrinkInputs));
     
+    // Listeners para la nueva funcionalidad de pegar
+    inputMethodRadios.forEach(radio => radio.addEventListener('change', toggleInputMethod));
+    processPasteBtn.addEventListener('click', processPastedList);
+    
     updateDishInputs();
     updateDrinkInputs();
+    toggleInputMethod(); // Inicializar la vista correcta
     loadHistoryFromStorage();
     
 });
-
