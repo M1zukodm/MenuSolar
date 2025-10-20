@@ -13,7 +13,7 @@
 
     <div class="container">
         <h1>Generador de Menú</h1>
-        <img src="img/plato.png" alt="Logo Solar"  title="Logo Solar Surge" class="logo-image">
+        <img src="img/plato.png" alt="Logo Solar" title="Logo Solar Surge" class="logo-image">
 
         <div class="step">
             <h2>Paso 1: Elige el día</h2>
@@ -23,11 +23,22 @@
 
         <div class="step">
             <h2>Paso 2: Define los platillos</h2>
-            <label>¿Cuántos platillos principales ofrecerás?</label>
-            <input type="radio" id="dishes5" name="numDishes" value="5" checked>
-            <label for="dishes5" class="inline-label">5 platillos</label>
-            <input type="radio" id="dishes6" name="numDishes" value="6">
-            <label for="dishes6" class="inline-label">6 platillos</label>
+            <div class="input-controls">
+                <label for="dishCount">Número de platillos:</label>
+                <div class="count-control">
+                    <input type="number" id="dishCount" min="1" max="20" value="5">
+                    <button id="applyDishCount" class="apply-btn">Aplicar</button>
+                </div>
+                <div class="paste-section">
+                    <label for="dishList">O pega tu lista de platillos (uno por línea):</label>
+                    <textarea id="dishList" placeholder="Ejemplo:
+Chiles rellenos
+Milanesa de res
+Enmoladas
+Camarones al gusto"></textarea>
+                    <button id="applyDishList" class="apply-btn">Aplicar Lista</button>
+                </div>
+            </div>
 
             <div id="dishInputsContainer">
             </div>
@@ -35,17 +46,36 @@
 
         <div class="step">
             <h2>Paso 3: Define las bebidas (opcional)</h2>
-            <label>¿Cuántas bebidas ofrecerás?</label>
-            <input type="radio" id="drinks0" name="numDrinks" value="0" checked>
-            <label for="drinks0" class="inline-label">No incluir</label>
-            <input type="radio" id="drinks1" name="numDrinks" value="1">
-            <label for="drinks1" class="inline-label">1 bebida</label>
-            <input type="radio" id="drinks2" name="numDrinks" value="2">
-            <label for="drinks2" class="inline-label">2 bebidas</label>
-            <input type="radio" id="drinks3" name="numDrinks" value="3">
-            <label for="drinks3" class="inline-label">3 bebidas</label>
+            <div class="input-controls">
+                <label for="drinkCount">Número de bebidas:</label>
+                <div class="count-control">
+                    <input type="number" id="drinkCount" min="0" max="10" value="0">
+                    <button id="applyDrinkCount" class="apply-btn">Aplicar</button>
+                </div>
+                <div class="paste-section">
+                    <label for="drinkList">O pega tu lista de bebidas (uno por línea):</label>
+                    <textarea id="drinkList" placeholder="Ejemplo:
+Agua de Horchata
+Agua de Jamaica"></textarea>
+                    <button id="applyDrinkList" class="apply-btn">Aplicar Lista</button>
+                </div>
+            </div>
 
             <div id="drinkInputsContainer">
+            </div>
+
+            <!-- Bebidas comunes predefinidas -->
+            <div class="common-drinks">
+                <h3>Bebidas comunes:</h3>
+                <div class="common-drinks-list">
+                    <span class="drink-tag" data-drink="Agua de Horchata">Agua de Horchata</span>
+                    <span class="drink-tag" data-drink="Agua de Jamaica">Agua de Jamaica</span>
+                    <span class="drink-tag" data-drink="Agua de Limón">Agua de Limón</span>
+                    <span class="drink-tag" data-drink="Agua de Pepino con Limón">Agua de Pepino con Limón</span>
+                    <span class="drink-tag" data-drink="Agua de Tamarindo">Agua de Tamarindo</span>
+                    <span class="drink-tag" data-drink="Agua de Fresa">Agua de Fresa</span>
+                    <span class="drink-tag" data-drink="Refresco">Refresco</span>
+                </div>
             </div>
         </div>
 
@@ -53,7 +83,10 @@
             <h2>Paso 4: ¡Genera tu menú!</h2>
             <button id="generateBtn">🎉 Generar Menú 🎉</button>
             <textarea id="menuOutput" readonly placeholder="Aquí aparecerá tu menú listo para copiar..."></textarea>
-            <button id="copyBtn">📋 Copiar Texto</button>
+            <div class="copy-buttons">
+                <button id="whatsappBtn" class="whatsapp-btn">💬 Copiar para WhatsApp</button>
+                <button id="facebookBtn" class="facebook-btn">📘 Copiar para Facebook</button>
+            </div>
         </div>
 
         <div class="step history-section">

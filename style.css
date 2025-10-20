@@ -28,7 +28,7 @@ h1 {
     margin-bottom: 25px;
 }
 
-h2{
+h2 {
     text-align: center;
 }
 
@@ -67,14 +67,64 @@ label {
     color: #555;
 }
 
-label.inline-label {
-    display: inline-block;
-    margin-right: 20px;
-    font-weight: normal;
+/* Controles de entrada */
+.input-controls {
+    margin-bottom: 20px;
+}
+
+.count-control {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.count-control input {
+    width: 80px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.apply-btn {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.apply-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.paste-section {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.paste-section textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 input[type="text"],
-input[type="date"] {
+input[type="date"],
+input[type="number"] {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -85,13 +135,10 @@ input[type="date"] {
 }
 
 input[type="text"]:focus,
-input[type="date"]:focus {
+input[type="date"]:focus,
+input[type="number"]:focus {
     border-color: #ff9800;
     outline: none;
-}
-
-input[type="radio"] {
-    margin-right: 5px;
 }
 
 /* Contenedor dinámico de inputs */
@@ -111,6 +158,43 @@ input[type="radio"] {
     font-weight: bold;
     color: #555;
     min-width: 20px;
+}
+
+/* Bebidas comunes */
+.common-drinks {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.common-drinks h3 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1em;
+    text-align: left;
+}
+
+.common-drinks-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.drink-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #e3f2fd;
+    border: 1px solid #2196F3;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.3s ease;
+}
+
+.drink-tag:hover {
+    background-color: #2196F3;
+    color: white;
 }
 
 /* Estilo de los botones */
@@ -137,8 +221,22 @@ button:hover {
     background: linear-gradient(45deg, #ff9800, #f57c00);
 }
 
-#copyBtn {
-    background: linear-gradient(45deg, #2196F3, #1976D2);
+.copy-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.copy-buttons button {
+    flex: 1;
+}
+
+.whatsapp-btn {
+    background: linear-gradient(45deg, #25D366, #128C7E);
+}
+
+.facebook-btn {
+    background: linear-gradient(45deg, #4267B2, #365899);
 }
 
 /* Área de resultado */
@@ -152,73 +250,72 @@ button:hover {
     background-color: #fffaf0;
     box-sizing: border-box;
     margin-top: 15px;
+    font-family: inherit;
 }
 
-/* --- ESTILOS ACTUALIZADOS PARA EL HISTORIAL --- */
+/* --- ESTILOS MEJORADOS PARA EL HISTORIAL --- */
 
 .history-section p {
     font-size: 0.9em;
     color: #666;
     margin-top: -10px;
+    text-align: center;
 }
 
 .history-item {
     background-color: #fafafa;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-left: 5px solid #ccc;
-    transition: background-color 0.3s, border-left 0.3s;
-    /* Nuevas propiedades para posicionar el botón */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-}
-
-.history-item-content {
+    padding: 15px;
+    margin-bottom: 12px;
+    border-left: 5px solid #ff9800;
+    transition: all 0.3s ease;
     cursor: pointer;
-    flex-grow: 1;
-    /* Hace que el contenido ocupe el espacio disponible */
+    position: relative;
 }
 
 .history-item:hover {
     background-color: #f1f1f1;
-    border-left-color: #ff9800;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .history-item-date {
     font-weight: bold;
     color: #d16400;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.history-item-day {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+    font-style: italic;
 }
 
 .history-item-dishes {
     font-size: 0.85em;
     color: #555;
-    margin-top: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.4;
     padding-right: 40px;
-    /* Espacio para que el texto no quede debajo del botón */
 }
 
-
-/* **NUEVOS ESTILOS PARA EL BOTÓN DE ELIMINAR** */
+/* Botón de eliminar con X centrada */
 .delete-btn {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: #f5f5f5;
     color: #666;
     border: none;
-    border-radius: 6px;
-    width: 32px;
-    height: 32px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
     font-size: 14px;
-    line-height: 32px;
+    font-weight: bold;
+    line-height: 28px;
     text-align: center;
     padding: 0;
     cursor: pointer;
@@ -240,3 +337,30 @@ button:hover {
     transform: translateY(-50%) scale(0.95);
 }
 
+/* Responsive */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px 20px;
+    }
+
+    .count-control {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .count-control input {
+        width: 100%;
+    }
+
+    .copy-buttons {
+        flex-direction: column;
+    }
+
+    .common-drinks-list {
+        flex-direction: column;
+    }
+
+    .drink-tag {
+        text-align: center;
+    }
+}
