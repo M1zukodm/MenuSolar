@@ -364,3 +364,82 @@ button:hover {
         text-align: center;
     }
 }
+
+/* Estilos para entrada por voz */
+.voice-input-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.voice-input-section h3 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1em;
+}
+
+.voice-btn {
+    background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    margin: 0 auto;
+}
+
+.voice-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.voice-btn.listening {
+    background: linear-gradient(45deg, #F44336, #D32F2F);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.voice-status {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    min-height: 20px;
+}
+
+.voice-status.listening {
+    background-color: #FFF3E0;
+    color: #E65100;
+}
+
+.voice-status.success {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.voice-status.error {
+    background-color: #FFEBEE;
+    color: #C62828;
+}

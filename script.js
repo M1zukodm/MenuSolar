@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const historyContainer = document.getElementById('historyContainer');
     const drinkTags = document.querySelectorAll('.drink-tag');
     
+    // --- REFERENCIAS ADICIONALES PARA VOZ ---
+    const voiceInputBtn = document.getElementById('voiceInputBtn');
+    const voiceStatus = document.getElementById('voiceStatus');
+    
     let menuHistory = [];
 
     // --- FUNCIONES DINÁMICAS PARA INPUTS ---
@@ -163,6 +167,95 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // --- RECONOCIMIENTO DE VOZ ---
+    let recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'es-MX';
+        
+        recognition.onstart = function() {
+            voiceInputBtn.classList.add('listening');
+            voiceStatus.textContent = 'Escuchando... Di los nombres de los platillos, por ejemplo: "chiles rellenos, enmoladas, pozole" o simplemente "chiles rellenos enmoladas pozole"';
+            voiceStatus.className = 'voice-status listening';
+        };
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            processVoiceCommand(transcript);
+        };
+        
+        recognition.onerror = function(event) {
+            voiceInputBtn.classList.remove('listening');
+            voiceStatus.textContent = 'Error: ' + event.error;
+            voiceStatus.className = 'voice-status error';
+        };
+        
+        recognition.onend = function() {
+            voiceInputBtn.classList.remove('listening');
+        };
+    } else {
+        voiceInputBtn.disabled = true;
+        voiceInputBtn.textContent = '🎤 Reconocimiento de voz no disponible';
+        voiceStatus.textContent = 'Tu navegador no soporta reconocimiento de voz';
+        voiceStatus.className = 'voice-status error';
+    }
+
+    // Procesar comando de voz - VERSIÓN SIMPLIFICADA
+    function processVoiceCommand(transcript) {
+        voiceStatus.textContent = `Comando detectado: "${transcript}"`;
+        
+        // Limpiar el texto: quitar palabras comunes y espacios extra
+        let cleanedText = transcript
+            .replace(/\b(platillos?|agregar|poner|quiero|deseo|para|el|la|los|las|un|una|unos|unas)\b/gi, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        
+        // Si después de limpiar no queda nada
+        if (!cleanedText) {
+            voiceStatus.textContent = 'No detecté nombres de platillos. Di por ejemplo: "chiles rellenos, enmoladas, pozole"';
+            voiceStatus.className = 'voice-status error';
+            return;
+        }
+        
+        // Extraer platillos (separados por comas, "y", espacios, etc.)
+        const dishes = cleanedText.split(/,|\sy\s|\scon\s|\s+o\s+|\s+/i)
+            .map(dish => dish.trim())
+            .filter(dish => 
+                dish.length > 0 && 
+                !dish.match(/^(y|con|o|de|para|con|sin|más|además|también)$/i) // Filtrar palabras de conexión
+            );
+        
+        if (dishes.length === 0) {
+            voiceStatus.textContent = 'No se detectaron platillos en tu comando';
+            voiceStatus.className = 'voice-status error';
+            return;
+        }
+        
+        // Limitar a máximo 20 platillos
+        const finalDishes = dishes.slice(0, 20);
+        const count = finalDishes.length;
+        
+        // Actualizar interfaz
+        dishCountInput.value = count;
+        createInputFields(count, dishInputsContainer, 'Platillo', finalDishes);
+        
+        voiceStatus.textContent = `¡Éxito! Se agregaron ${count} platillos: ${finalDishes.join(', ')}`;
+        voiceStatus.className = 'voice-status success';
+        
+        // Hacer scroll para mostrar los nuevos campos
+        dishInputsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Evento para el botón de voz
+    voiceInputBtn.addEventListener('click', function() {
+        if (recognition) {
+            recognition.start();
+        }
+    });
+
     // --- LÓGICA DE HISTORIAL ---
 
     function saveMenuToHistory(menuData) {
@@ -275,22 +368,47 @@ document.addEventListener('DOMContentLoaded', function() {
             drinkSection = `\n🥤 *Para tomar:*\n${drinkList}`;
         }
 
-        const finalMenu = `¡Buen día! ${greeting.emoji} ¡${greeting.text}! ${capitalizedDayName === 'Viernes' ? '🎉' : ''}
-El día perfecto para celebrar con los platillos más deliciosos de Guerrero 💫
-Te presentamos nuestro menú, preparado con el sazón tradicional:
+        // Texto para WhatsApp (con negritas usando *)
+        const whatsappMenu = `¡Buen día! ${greeting.emoji} ${greeting.text} 
+El día perfecto para celebrar con los platillos más deliciosos de Coyuca 💫
 
 🍽 *Menú del ${capitalizedDayName}:*
 ${dishesList}
 ${drinkSection}
 
 📞 *¡Realiza tu pedido!*
-📍 Coyuca de Benítez (zona centro y colonias cercanas)
-🛵 Servicio a domicilio
-📲 781 100 3796
+📍 *Ubicación:* Coyuca de Benítez.
+🛵 *Servicio a domicilio* (zona centro y colonias cercanas)
+📲 *Pedidos con anticipación*
+  *¡Todo fresco y al momento!*
+ *Llama o escribe al:*
+📞 *781 100 3796*
+
+¡Haz de tu ${dayName} el mejor día de la semana lleno de auténtico sabor! 😊🎉`;
+
+        // Texto para Facebook (sin asteriscos para negritas)
+        const facebookMenu = `¡Buen día! ${greeting.emoji} ${greeting.text} 
+El día perfecto para celebrar con los platillos más deliciosos de Coyuca 💫
+
+🍽 Menú del ${capitalizedDayName}:
+${dishesList}
+${drinkSection}
+
+📞 ¡Realiza tu pedido!
+📍 Ubicación: Coyuca de Benítez.
+🛵 Servicio a domicilio (zona centro y colonias cercanas)
+📲 Pedidos con anticipación
+  ¡Todo fresco y al momento!
+ Llama o escribe al:
+📞 781 100 3796
 
 ¡Haz de tu ${dayName} el mejor día de la semana lleno de auténtico sabor! 😊🎉`;
         
-        menuOutput.value = finalMenu;
+        menuOutput.value = whatsappMenu;
+        
+        // Guardar ambos formatos en el elemento para usarlos después
+        menuOutput.dataset.whatsapp = whatsappMenu;
+        menuOutput.dataset.facebook = facebookMenu;
 
         const menuData = { date: dateInput.value, dishes, drinks };
         saveMenuToHistory(menuData);
@@ -298,11 +416,11 @@ ${drinkSection}
 
     // --- FUNCIONES DE COPIAR ---
     whatsappBtn.addEventListener('click', function() {
-        if (menuOutput.value === '') {
+        if (!menuOutput.dataset.whatsapp) {
             alert('Primero genera un menú para poder copiarlo.');
             return;
         }
-        const whatsappText = menuOutput.value;
+        const whatsappText = menuOutput.dataset.whatsapp;
         navigator.clipboard.writeText(whatsappText).then(() => {
             whatsappBtn.textContent = '¡Copiado!';
             setTimeout(() => {
@@ -314,11 +432,11 @@ ${drinkSection}
     });
 
     facebookBtn.addEventListener('click', function() {
-        if (menuOutput.value === '') {
+        if (!menuOutput.dataset.facebook) {
             alert('Primero genera un menú para poder copiarlo.');
             return;
         }
-        const facebookText = menuOutput.value.replace(/\*/g, '');
+        const facebookText = menuOutput.dataset.facebook;
         navigator.clipboard.writeText(facebookText).then(() => {
             facebookBtn.textContent = '¡Copiado!';
             setTimeout(() => {
