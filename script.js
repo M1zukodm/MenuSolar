@@ -129,43 +129,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- BEBIDAS COMUNES ---
-    drinkTags.forEach(tag => {
-        tag.addEventListener('click', function() {
-            const drinkValue = this.getAttribute('data-drink');
-            const currentCount = parseInt(drinkCountInput.value);
-            
-            if (currentCount === 0) {
-                // Si no hay bebidas, establecer 1 y agregar
-                drinkCountInput.value = 1;
-                updateDrinkInputs();
-                const firstInput = drinkInputsContainer.querySelector('.bebida');
-                firstInput.value = drinkValue;
-            } else {
-                // Buscar un campo vacío o el último campo
-                const drinkInputs = drinkInputsContainer.querySelectorAll('.bebida');
-                let added = false;
-                
-                // Primero buscar campos vacíos
-                for (let input of drinkInputs) {
-                    if (!input.value.trim()) {
-                        input.value = drinkValue;
-                        added = true;
-                        break;
-                    }
-                }
-                
-                // Si no hay campos vacíos y tenemos espacio, agregar nuevo campo
-                if (!added && currentCount < 10) {
-                    drinkCountInput.value = currentCount + 1;
-                    updateDrinkInputs();
-                    const newInputs = drinkInputsContainer.querySelectorAll('.bebida');
-                    newInputs[newInputs.length - 1].value = drinkValue;
-                } else if (!added) {
-                    alert('Ya tienes el máximo de 10 bebidas. Elimina alguna para agregar más.');
-                }
+drinkTags.forEach(tag => {
+    tag.addEventListener('click', function() {
+        const drinkValue = this.getAttribute('data-drink');
+        const currentCount = parseInt(drinkCountInput.value);
+        
+        // Obtener todos los inputs de bebida actuales
+        const drinkInputs = drinkInputsContainer.querySelectorAll('.bebida');
+        let added = false;
+        
+        // Buscar el primer campo vacío
+        for (let i = 0; i < drinkInputs.length; i++) {
+            if (!drinkInputs[i].value.trim()) {
+                drinkInputs[i].value = drinkValue;
+                added = true;
+                break;
             }
-        });
+        }
+        
+        // Si no hay campos vacíos y podemos agregar más
+        if (!added && currentCount < 10) {
+            // Incrementar el contador
+            drinkCountInput.value = currentCount + 1;
+            
+            // Obtener todos los valores actuales
+            const currentValues = Array.from(drinkInputs).map(input => input.value.trim());
+            currentValues.push(drinkValue);
+            
+            // Recrear los inputs con los nuevos valores
+            createInputFields(currentCount + 1, drinkInputsContainer, 'Bebida', currentValues);
+        } else if (!added) {
+            alert('Ya tienes el máximo de 10 bebidas. Elimina alguna para agregar más.');
+        }
     });
+});
 
     // --- RECONOCIMIENTO DE VOZ ---
     let recognition = null;
@@ -362,19 +359,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const dishesList = dishes.map(d => `✅ ${d}`).join('\n');
 
-        let drinkSection = '';
-        if (drinks.length > 0) {
-            const drinkList = drinks.map(d => `💜 ${d}`).join('\n');
-            drinkSection = `\n🥤 *Para tomar:*\n${drinkList}`;
-        }
+let drinkSection = '';
+if (drinks.length > 0) {
+    const drinkList = drinks.map(d => `🧊 ${d}`).join('\n');
+    drinkSection = `\n🥤 Para tomar:\n${drinkList}`; 
+}
 
-        // Texto para WhatsApp (con negritas usando *)
-        const whatsappMenu = `¡Buen día! ${greeting.emoji} ${greeting.text} 
+//en WhatsApp agrega los asteriscos específicamente:
+const whatsappMenu = `¡Buen día! ${greeting.emoji} ${greeting.text} 
 El día perfecto para celebrar con los platillos más deliciosos de Coyuca 💫
 
 🍽 *Menú del ${capitalizedDayName}:*
-${dishesList}
-${drinkSection}
+${dishes.map(d => `✅ ${d}`).join('\n')}
+${drinkSection.replace('Para tomar:', '*Para tomar:*')} 
 
 📞 *¡Realiza tu pedido!*
 📍 *Ubicación:* Coyuca de Benítez.
@@ -382,17 +379,16 @@ ${drinkSection}
 📲 *Pedidos con anticipación*
   *¡Todo fresco y al momento!*
  *Llama o escribe al:*
-📞 *781 100 3796*
+📞 *781 109 8952*
 
 ¡Haz de tu ${dayName} el mejor día de la semana lleno de auténtico sabor! 😊🎉`;
 
-        // Texto para Facebook (sin asteriscos para negritas)
-        const facebookMenu = `¡Buen día! ${greeting.emoji} ${greeting.text} 
+// Y Facebook usa drinkSection sin modificaciones
+const facebookMenu = `¡Buen día! ${greeting.emoji} ${greeting.text} 
 El día perfecto para celebrar con los platillos más deliciosos de Coyuca 💫
 
 🍽 Menú del ${capitalizedDayName}:
-${dishesList}
-${drinkSection}
+${dishes.map(d => `✅ ${d}`).join('\n')}${drinkSection}
 
 📞 ¡Realiza tu pedido!
 📍 Ubicación: Coyuca de Benítez.
@@ -400,7 +396,7 @@ ${drinkSection}
 📲 Pedidos con anticipación
   ¡Todo fresco y al momento!
  Llama o escribe al:
-📞 781 100 3796
+📞 781 109 8952
 
 ¡Haz de tu ${dayName} el mejor día de la semana lleno de auténtico sabor! 😊🎉`;
         
